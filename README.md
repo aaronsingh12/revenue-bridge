@@ -45,7 +45,10 @@ boot. Every submission is really sent, and you get a link to read it:
 
 Nothing reaches a real person in this mode, so test as much as you like.
 
-### Switching on real delivery
+### Legacy SMTP instructions (removed)
+
+> This SMTP configuration is no longer used by the application. Use the Resend
+> configuration below; the legacy notes will be removed in a documentation-only cleanup.
 
 Fill these in `server/.env` and restart — Gmail needs a 16-character
 **App Password** (Google Account → Security → 2-Step Verification → App passwords), not your login password:
@@ -91,19 +94,29 @@ the only SMTP-side fix is moving it to a paid instance; switching between 465 an
 restriction. For a provider-agnostic production route, use an email HTTP API (Resend, Brevo, SendGrid,
 or Zoho ZeptoMail) rather than raw SMTP.
 
+### Production email with Resend
+
+1. Create a [Resend](https://resend.com) account, open **API Keys**, create a sending key, and copy it once.
+2. Add that value to Render as `RESEND_API_KEY`.
+3. Initially set `MAIL_FROM="Revenue Bridge <onboarding@resend.dev>"`. This temporary sender can deliver
+   only to the email address associated with the Resend account.
+4. In Resend, open **Domains**, add `revenuebridge.co.in`, and copy its SPF and DKIM records exactly.
+5. In GoDaddy, open **My Products → Domains → revenuebridge.co.in → DNS → Add**. Add each record Resend
+   lists (same type, host/name, and value). Do not change Zoho's existing MX records.
+6. When Resend marks the domain verified, change Render to
+   `MAIL_FROM="Revenue Bridge <hello@revenuebridge.co.in>"` and redeploy.
+
+Resend sends over HTTPS, so it avoids Render's blocked SMTP ports. The existing Reply-To continues to point
+to the lead's submitted address.
+
 ## Environment (server/.env)
 
 | Var | Purpose |
 | --- | --- |
 | `CONTACT_EMAIL` | **Where every form notification is sent.** Configurable only here — never hardcoded. |
 | `MONGO_URI` | MongoDB connection. Required in production; empty falls back to a JSON file with a warning. |
-| `SMTP_SERVICE` | Provider shortcut (`gmail`, `outlook`, …). Use instead of `SMTP_HOST`. |
-| `SMTP_HOST/PORT/USER/PASS` | Explicit SMTP server. If all are empty, the Ethereal capture inbox is used. |
-| `SMTP_TLS_MODE` | `starttls` for port 587 or `ssl` for port 465. |
-| `SMTP_FAMILY` | `0` (default), `4`, or `6`; set `4` on Render only when the DNS/network diagnostics support it. |
-| `SMTP_CONNECTION_TIMEOUT/GREETING_TIMEOUT/SOCKET_TIMEOUT` | Explicit SMTP timeouts in milliseconds (defaults: 15000/15000/30000). |
-| `MAIL_FROM` | Envelope "From". Most providers require it to match `SMTP_USER`. |
-| `MAIL_TRANSPORT` | Set to `console` to log submissions and send nothing. |
+| `RESEND_API_KEY` | Resend API key. Required for email delivery. |
+| `MAIL_FROM` | Verified Resend sender, e.g. `Revenue Bridge <hello@revenuebridge.co.in>`. |
 
 ## API
 
