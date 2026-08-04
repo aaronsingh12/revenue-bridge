@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer'
 import { lookup } from 'node:dns/promises'
+import { format } from 'node:util'
 
 /* ============================================================================
  *  ►►►  WHERE FORM SUBMISSIONS GET DELIVERED  ◄◄◄
@@ -85,11 +86,12 @@ function smtpConfig() {
   }
 }
 
-function smtpLogger(info) {
-  const prefix = `[mail][smtp][${info.level || 'debug'}]`
-  // Nodemailer never needs credentials in application logs; its logger object
-  // contains only protocol metadata and the message.
-  console.log(`${prefix} ${info.src || 'nodemailer'}: ${info.msg}`)
+function smtpLogger(entry, message, ...args) {
+  // Nodemailer uses the Bunyan-style signature (metadata, message, ...args),
+  // not a single structured argument. Its SMTP implementation redacts the
+  // password from AUTH command logs before passing the message here.
+  const direction = entry?.tnx === 'client' ? 'C' : entry?.tnx === 'server' ? 'S' : entry?.tnx || 'smtp'
+  console.log(`[mail][smtp][${direction}] ${format(message, ...args)}`)
 }
 
 function logMailError(context, err) {
