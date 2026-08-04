@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { submitLead } from '../lib/api.js'
+import { sendContactEmail } from '../lib/emailjs.js'
 
 function Field({ name, label, value, onChange, type = 'text', textarea = false, required = false, rows = 4 }) {
   const filled = value && value.length > 0
@@ -43,8 +44,15 @@ export default function LeadForm({ endpoint, fields, submitLabel = 'Send', succe
     }
     setStatus('loading')
     try {
-      const data = await submitLead(endpoint, { ...values, website: hp })
+      const payload = { ...values, website: hp, type: endpoint }
+      const data = await submitLead(endpoint, payload)
       setPreviewUrl(data?.previewUrl || null)
+
+      const emailResult = await sendContactEmail(payload)
+      if (!emailResult.ok && !emailResult.skipped) {
+        console.warn('[emailjs] Contact delivery failed:', emailResult.reason)
+      }
+
       setStatus('success')
     } catch (err) {
       setStatus('idle')

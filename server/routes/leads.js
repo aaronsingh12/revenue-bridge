@@ -2,7 +2,6 @@ import { Router } from 'express'
 import Lead from '../models/Lead.js'
 import { isMongoConnected } from '../config/db.js'
 import { appendDevLead } from '../utils/devStore.js'
-import { sendLeadNotification } from '../utils/mailer.js'
 
 const router = Router()
 
@@ -65,23 +64,9 @@ function makeHandler(type) {
         saved = await appendDevLead({ ...payload, createdAt: new Date().toISOString() })
       }
 
-      // Production: fire-and-forget, the visitor must never wait on SMTP.
-      // Development: wait briefly so the response can carry the Ethereal
-      // preview link, which makes the whole flow checkable from the browser.
-      if (process.env.NODE_ENV === 'production') {
-        sendLeadNotification(payload).catch(() => {})
-        return res.status(201).json({ ok: true, message: 'Received. We will get back to you shortly.' })
-      }
-
-      const mail = await Promise.race([
-        sendLeadNotification(payload).catch(() => null),
-        new Promise((resolve) => setTimeout(() => resolve(null), 8000))
-      ])
-
       return res.status(201).json({
         ok: true,
-        message: 'Received. We will get back to you shortly.',
-        previewUrl: mail?.previewUrl || null
+        message: 'Received. We will get back to you shortly.'
       })
     } catch (err) {
       console.error(`[leads] ${type} failed:`, err.message)
