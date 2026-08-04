@@ -1,0 +1,216 @@
+{
+  "brand": {
+    "name": "Revenue Bridge",
+    "tagline": "B2B pipeline engineering",
+    "heroEyebrow": "SHT 01 — B2B PIPELINE ENGINEERING",
+    "heroTitleTop": "PIPELINE,",
+    "heroTitleBottom": "ENGINEERED.",
+    "heroSub": "We build the span between your business and its next revenue: hand-researched prospects, multi-channel outreach, and appointments your closers actually want to take.",
+    "heroRotating": ["qualified meetings", "warm conversations", "sales pipeline", "closed revenue"]
+  },
+  "marquee": [
+    "Lead generation",
+    "Appointment setting",
+    "ICP research",
+    "Sales development",
+    "B2B outreach",
+    "Prospect research",
+    "Lead qualification",
+    "Pipeline development"
+  ],
+  "stages": [
+    {
+      "id": "business",
+      "n": "01",
+      "title": "Business",
+      "desc": "Where you stand today: an offer that works and a market worth winning. We start from your ground, not a template."
+    },
+    {
+      "id": "research",
+      "n": "02",
+      "title": "Research",
+      "desc": "We survey the territory — accounts, buying committees, timing signals — before a single message is written."
+    },
+    {
+      "id": "targeting",
+      "n": "03",
+      "title": "Targeting",
+      "desc": "Your ICP gets locked into hand-built, verified lists. No scraped bulk data, no spray-and-pray."
+    },
+    {
+      "id": "connection",
+      "n": "04",
+      "title": "Connection",
+      "desc": "Multi-channel outreach — email, LinkedIn, phone — sequenced so it reads like one person, not a campaign."
+    },
+    {
+      "id": "qualification",
+      "n": "05",
+      "title": "Qualification",
+      "desc": "Every reply is screened against your criteria before it ever touches your calendar."
+    },
+    {
+      "id": "opportunity",
+      "n": "06",
+      "title": "Opportunity",
+      "desc": "Briefed prospects, confirmed slots, warm context. Meetings that show up ready to talk."
+    },
+    {
+      "id": "revenue",
+      "n": "07",
+      "title": "Revenue",
+      "desc": "Your closers close. The structure holds, and the next cohort is already crossing."
+    }
+  ],
+  "challenges": [
+    {
+      "title": "Flat pipeline",
+      "desc": "Inbound has plateaued and referrals are unpredictable. New opportunities arrive too slowly to hit the plan."
+    },
+    {
+      "title": "Long sales cycles",
+      "desc": "Deals drag because conversations start with the wrong people, at the wrong moment, with no shared context."
+    },
+    {
+      "title": "Inconsistent lead quality",
+      "desc": "Lists get bought, tools get tried, and yet most replies are polite no-thank-yous instead of real buying intent."
+    },
+    {
+      "title": "Stretched-thin team",
+      "desc": "Your closers spend their best hours prospecting and chasing no-shows instead of running deals."
+    },
+    {
+      "title": "Vendor burn",
+      "desc": "A past agency promised volume, delivered noise, and left you skeptical that outsourced outbound can work."
+    },
+    {
+      "title": "Sales–marketing gap",
+      "desc": "Marketing hands over leads sales can't use; sales feedback never makes it back. Nobody owns the middle."
+    }
+  ],
+  "differentiators": [
+    {
+      "title": "Research before outreach",
+      "desc": "Lists are built and verified by hand for your ICP. The message is written for the person reading it, because we know who that person is."
+    },
+    {
+      "title": "One accountable pod",
+      "desc": "A single, named team owns your account end to end — research, copy, sequencing, qualification — so nothing falls between vendors."
+    },
+    {
+      "title": "Qualification you define",
+      "desc": "We agree on what a real opportunity looks like before launch, and only conversations that clear that bar reach your calendar."
+    },
+    {
+      "title": "Built to hand off",
+      "desc": "Playbooks, lists, and learnings are yours. If we ever part ways, the system keeps working — you keep the blueprints."
+    }
+  ],
+  "solutions": [
+    {
+      "id": "lead-generation",
+      "n": "01",
+      "title": "Lead generation",
+      "desc": "A steady, predictable flow of prospects who match your ideal profile — sourced, verified, and warmed before handover.",
+      "points": ["Hand-sourced prospect lists", "Verification before outreach", "Weekly delivery cadence"]
+    },
+    {
+      "id": "sales-development",
+      "n": "02",
+      "title": "Sales development",
+      "desc": "A dedicated SDR function without the hiring cycle — trained on your offer, running your outbound day after day.",
+      "points": ["Dedicated SDR pod", "Your playbook, executed daily", "Transparent activity reporting"]
+    },
+    {
+      "id": "appointment-setting",
+      "n": "03",
+      "title": "Appointment setting",
+      "desc": "Confirmed meetings with decision-makers who know why they're on the call — briefed, scheduled, and reminded.",
+      "points": ["Decision-maker targeting", "Calendar-confirmed slots", "No-show follow-up handled"]
+    },
+    {
+      "id": "prospect-research",
+      "n": "04",
+      "title": "Prospect research",
+      "desc": "Deep manual research into accounts and people: role, priorities, triggers, and the angle most likely to land.",
+      "points": ["Account and persona mapping", "Trigger and signal tracking", "Research notes with every lead"]
+    },
+    {
+      "id": "icp-research",
+      "n": "05",
+      "title": "ICP research",
+      "desc": "A sharper definition of who actually buys from you — built from your closed-won data and market evidence.",
+      "points": ["Closed-won pattern analysis", "Segment prioritization", "ICP document you keep"]
+    },
+    {
+      "id": "b2b-outreach",
+      "n": "06",
+      "title": "B2B outreach",
+      "desc": "Email, LinkedIn, and phone sequences written for humans and sequenced for timing — one voice across every channel.",
+      "points": ["Multi-channel sequencing", "Copy written per segment", "Deliverability looked after"]
+    },
+    {
+      "id": "lead-qualification",
+      "n": "07",
+      "title": "Lead qualification",
+      "desc": "Every response screened against criteria we agree on together, so your team only sees real opportunities.",
+      "points": ["Shared qualification bar", "Fast response triage", "Clean CRM handover"]
+    },
+    {
+      "id": "pipeline-development",
+      "n": "08",
+      "title": "Pipeline development",
+      "desc": "The full span, managed: from cold territory to booked opportunity, with reporting your leadership can read.",
+      "points": ["End-to-end ownership", "Stage-by-stage visibility", "Compounding playbooks"]
+    }
+  ],
+  "proofPlaceholders": {
+    "note": "Real client results, logos, and testimonials will appear here as engagements complete. Revenue Bridge does not publish invented numbers.",
+    "caseSlots": [
+      { "tag": "CASE FILE — RESERVED", "line": "Client industry, engagement scope, and verified outcomes will be documented here." },
+      { "tag": "CASE FILE — RESERVED", "line": "Every result we publish will be traceable to a real engagement." },
+      { "tag": "CASE FILE — RESERVED", "line": "Under construction — the honest kind." }
+    ],
+    "testimonialSlots": [
+      { "tag": "CLIENT WORDS — PENDING", "line": "Testimonials are published only with client sign-off, verbatim." },
+      { "tag": "CLIENT WORDS — PENDING", "line": "We'd rather show you an empty frame than a stock quote." }
+    ]
+  },
+  "facto": {
+    "eyebrow": "SHT 05 — PARTNER COMPANIES",
+    "title": "Built alongside great partners.",
+    "desc": "We collaborate with partner companies that help create stronger, more sustainable growth outcomes.",
+    "status": "PARTNERSHIPS"
+  },
+  "faqs": [
+    {
+      "q": "What happens after I book a call?",
+      "a": "A 30-minute working session, not a pitch. We look at your current pipeline, your ICP, and whether outbound is even the right lever for you right now. If it isn't, we'll say so."
+    },
+    {
+      "q": "How fast can an engagement start?",
+      "a": "Research and list-building begin in the first days of an engagement. Outreach launches once your ICP, messaging, and qualification bar are agreed — quality of setup decides quality of meetings."
+    },
+    {
+      "q": "How do you qualify a lead before it reaches us?",
+      "a": "Before launch we agree on explicit criteria — role, company profile, need, timing. Every reply is screened against that bar, and only conversations that clear it are booked into your calendar."
+    },
+    {
+      "q": "What do you need from our team?",
+      "a": "A few working sessions up front, honest feedback on early conversations, and a closer who attends the meetings. We handle research, copy, sending, and scheduling."
+    },
+    {
+      "q": "Do you work with partner companies?",
+      "a": "Yes. We collaborate with partner companies when it helps create stronger outcomes for our clients."
+    },
+    {
+      "q": "How is pricing structured?",
+      "a": "Per engagement, based on scope and target volume — agreed before anything launches, with no surprise line items. We'll walk you through it on the call."
+    }
+  ],
+  "contact": {
+    "_comment_email": "DEMO ADDRESS — offline mirror of server/data/content.json, used when the API is unreachable. Keep both in sync; delivery itself is controlled by CONTACT_EMAIL in server/.env.",
+    "email": "jasmine@revenuebridge.co.in",
+    "location": "New Delhi, India — working across time zones"
+  }
+}
