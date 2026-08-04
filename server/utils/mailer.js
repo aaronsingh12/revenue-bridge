@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { lookup } from 'node:dns/promises'
 
 /* ============================================================================
  *  ►►►  WHERE FORM SUBMISSIONS GET DELIVERED  ◄◄◄
@@ -43,6 +44,78 @@ const FIELD_ORDER = Object.keys(FIELD_LABELS)
 
 let transportPromise = null
 let mode = 'unconfigured'
+let transportConfig = null
+
+const DEFAULT_CONNECTION_TIMEOUT = 15_000
+const DEFAULT_GREETING_TIMEOUT = 15_000
+const DEFAULT_SOCKET_TIMEOUT = 30_000
+
+function numberFromEnv(name, fallback) {
+  const value = Number(process.env[name])
+  return Number.isFinite(value) && value > 0 ? value : fallback
+}
+
+function smtpConfig() {
+  const port = numberFromEnv('SMTP_PORT', 587)
+  const tlsMode = String(process.env.SMTP_TLS_MODE || (port === 465 ? 'ssl' : 'starttls')).toLowerCase()
+  // Preserve Node's normal address selection unless the deployment explicitly
+  // requires IPv4 or IPv6. Render users can set SMTP_FAMILY=4 after the DNS
+  // diagnostic shows dual-stack resolution.
+  const family = Number(process.env.SMTP_FAMILY || 0)
+
+  if (!['ssl', 'starttls'].includes(tlsMode)) {
+    throw new Error('SMTP_TLS_MODE must be "ssl" (port 465) or "starttls" (port 587).')
+  }
+  if (![0, 4, 6].includes(family)) {
+    throw new Error('SMTP_FAMILY must be 0, 4, or 6.')
+  }
+
+  return {
+    host: process.env.SMTP_HOST,
+    port,
+    secure: tlsMode === 'ssl',
+    requireTLS: tlsMode === 'starttls',
+    family,
+    connectionTimeout: numberFromEnv('SMTP_CONNECTION_TIMEOUT', DEFAULT_CONNECTION_TIMEOUT),
+    greetingTimeout: numberFromEnv('SMTP_GREETING_TIMEOUT', DEFAULT_GREETING_TIMEOUT),
+    socketTimeout: numberFromEnv('SMTP_SOCKET_TIMEOUT', DEFAULT_SOCKET_TIMEOUT),
+    // Do not disable certificate validation in production. If this fails, fix
+    // the hostname/certificate chain instead of setting it to false.
+    tls: { servername: process.env.SMTP_HOST, rejectUnauthorized: true }
+  }
+}
+
+function smtpLogger(info) {
+  const prefix = `[mail][smtp][${info.level || 'debug'}]`
+  // Nodemailer never needs credentials in application logs; its logger object
+  // contains only protocol metadata and the message.
+  console.log(`${prefix} ${info.src || 'nodemailer'}: ${info.msg}`)
+}
+
+function logMailError(context, err) {
+  console.error(`[mail] ${context}: ${err.message}`)
+  console.error('[mail] Error details:', {
+    name: err.name,
+    code: err.code,
+    command: err.command,
+    response: err.response,
+    responseCode: err.responseCode,
+    errno: err.errno,
+    syscall: err.syscall,
+    address: err.address,
+    port: err.port,
+    stack: err.stack
+  })
+}
+
+async function logDnsResolution(host, family) {
+  try {
+    const addresses = await lookup(host, { all: true, verbatim: true, family })
+    console.log(`[mail] DNS ${host} (family=${family || 'auto'}): ${addresses.map((entry) => `${entry.address}/IPv${entry.family}`).join(', ')}`)
+  } catch (err) {
+    logMailError(`DNS lookup failed for ${host}`, err)
+  }
+}
 
 function escapeHtml(value) {
   return String(value)
@@ -62,10 +135,30 @@ async function resolveTransport() {
 
   if (SMTP_USER && SMTP_PASS && (SMTP_HOST || SMTP_SERVICE)) {
     mode = SMTP_HOST ? `smtp (${SMTP_HOST})` : `service (${SMTP_SERVICE})`
-    const base = SMTP_HOST
-      ? { host: SMTP_HOST, port: Number(SMTP_PORT || 587), secure: Number(SMTP_PORT) === 465 }
-      : { service: SMTP_SERVICE }
-    return nodemailer.createTransport({ ...base, auth: { user: SMTP_USER, pass: SMTP_PASS } })
+    const base = SMTP_HOST ? smtpConfig() : { service: SMTP_SERVICE }
+    transportConfig = base
+    if (SMTP_HOST) {
+      await logDnsResolution(base.host, base.family)
+      console.log('[mail] SMTP configuration:', {
+        host: base.host,
+        port: base.port,
+        tlsMode: base.secure ? 'ssl' : 'starttls',
+        family: base.family || 'auto',
+        connectionTimeout: base.connectionTimeout,
+        greetingTimeout: base.greetingTimeout,
+        socketTimeout: base.socketTimeout,
+        smtpUserConfigured: Boolean(SMTP_USER),
+        smtpPasswordConfigured: Boolean(SMTP_PASS),
+        mailFromConfigured: Boolean(process.env.MAIL_FROM),
+        contactEmailConfigured: Boolean(process.env.CONTACT_EMAIL)
+      })
+    }
+    return nodemailer.createTransport({
+      ...base,
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
+      debug: true,
+      logger: { debug: smtpLogger, info: smtpLogger, warn: smtpLogger, error: smtpLogger }
+    })
   }
 
   // No credentials: spin up a throwaway Ethereal inbox so mail can still be
@@ -145,10 +238,11 @@ export async function sendLeadNotification(lead) {
   }
 
   try {
+    const from = process.env.MAIL_FROM || `Revenue Bridge <${process.env.SMTP_USER || 'no-reply@revenuebridge.local'}>`
     const info = await transport.sendMail({
-      from: process.env.MAIL_FROM || `Revenue Bridge <${process.env.SMTP_USER || 'no-reply@revenuebridge.local'}>`,
+      from,
       to,
-      replyTo: lead.email ? `${lead.name} <${lead.email}>` : undefined,
+      replyTo: lead.email ? { name: lead.name, address: lead.email } : undefined,
       subject,
       text,
       html: renderHtml(lead)
@@ -158,7 +252,7 @@ export async function sendLeadNotification(lead) {
     if (previewUrl) console.log(`[mail] ► Read it here: ${previewUrl}`)
     return { ok: true, mode, previewUrl }
   } catch (err) {
-    console.error('[mail] Send failed:', err.message)
+    logMailError('Send failed', err)
     console.error(`[mail] Lead was still saved. Payload:\n${text.replace(/^/gm, '  ')}`)
     return { ok: false, mode, error: err.message }
   }
@@ -167,7 +261,26 @@ export async function sendLeadNotification(lead) {
 /** Warms the transport at boot so the console states the delivery mode up front. */
 export async function describeMailer() {
   await getTransport()
-  return { mode, to: process.env.CONTACT_EMAIL || null }
+  return { mode, to: process.env.CONTACT_EMAIL || null, config: transportConfig }
+}
+
+/**
+ * Opens an SMTP connection and completes TLS + authentication without sending
+ * a message. It makes failures visible at deploy time while leaving the HTTP
+ * service and lead-saving flow available if the mail provider is unavailable.
+ */
+export async function verifyMailer() {
+  const transport = await getTransport()
+  if (!transport) return { ok: true, skipped: true, mode }
+
+  try {
+    await transport.verify()
+    console.log(`[mail] SMTP verify succeeded via ${mode}. DNS, TCP, TLS, greeting, and authentication completed.`)
+    return { ok: true, mode }
+  } catch (err) {
+    logMailError('SMTP verify failed', err)
+    return { ok: false, mode, error: err.message, code: err.code, command: err.command }
+  }
 }
 
 export function mailerMode() {

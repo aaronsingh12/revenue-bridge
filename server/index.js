@@ -4,7 +4,7 @@ import cors from 'cors'
 import { connectDB } from './config/db.js'
 import leadsRouter from './routes/leads.js'
 import contentRouter from './routes/content.js'
-import { describeMailer } from './utils/mailer.js'
+import { describeMailer, verifyMailer } from './utils/mailer.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -26,6 +26,10 @@ connectDB().finally(() => {
     const mail = await describeMailer()
     console.log(`[mail] Delivering form submissions to: ${mail.to || '(CONTACT_EMAIL not set in server/.env)'}`)
     console.log(`[mail] Transport: ${mail.mode}`)
+    const verification = await verifyMailer()
+    if (!verification.ok && !verification.skipped) {
+      console.error('[mail] SMTP is unavailable at startup. Leads will still be stored, but notifications will fail until this connection issue is resolved.')
+    }
     if (String(mail.mode).startsWith('ethereal')) {
       console.log('[mail] Demo mode — each submission prints a preview link here. Add SMTP_* in server/.env for real delivery.')
     }

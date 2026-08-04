@@ -60,6 +60,37 @@ Any other provider works via `SMTP_HOST` / `SMTP_PORT` instead of `SMTP_SERVICE`
 prints the recipient and the transport it chose, so there is never any doubt about where mail is going.
 Notifications carry the sender in `Reply-To`, so replying from the inbox reaches the lead directly.
 
+### Zoho Mail on Render
+
+Use the exact SMTP host supplied by the Zoho data centre for the account. For this account, the existing
+`smtp.zoho.in` host should be retained because it already works locally. Zoho's standard alternative is
+`smtp.zoho.com`; do not swap hosts unless Zoho's account settings identify that host for the account.
+
+For STARTTLS (the normal choice):
+
+```dotenv
+SMTP_HOST=smtp.zoho.in
+SMTP_PORT=587
+SMTP_TLS_MODE=starttls
+SMTP_CONNECTION_TIMEOUT=15000
+SMTP_GREETING_TIMEOUT=15000
+SMTP_SOCKET_TIMEOUT=30000
+SMTP_USER=your-full-zoho-address
+SMTP_PASS=your-zoho-app-password
+MAIL_FROM="Revenue Bridge <your-full-zoho-address>"
+```
+
+For implicit TLS instead, use `SMTP_PORT=465` and `SMTP_TLS_MODE=ssl`. Use one mode at a time; this
+is a deliberate configuration choice, not an automatic retry. The startup `SMTP verify` log tests DNS,
+TCP, TLS and authentication without sending a lead email. It never prints passwords. Leave
+`SMTP_FAMILY` unset initially; set `SMTP_FAMILY=4` only if the startup DNS log shows dual-stack records
+and the Render-specific connection failure implicates IPv6.
+
+Render free web services block outbound SMTP traffic on ports 25, 465 and 587. If the service is free,
+the only SMTP-side fix is moving it to a paid instance; switching between 465 and 587 cannot bypass that
+restriction. For a provider-agnostic production route, use an email HTTP API (Resend, Brevo, SendGrid,
+or Zoho ZeptoMail) rather than raw SMTP.
+
 ## Environment (server/.env)
 
 | Var | Purpose |
@@ -68,6 +99,9 @@ Notifications carry the sender in `Reply-To`, so replying from the inbox reaches
 | `MONGO_URI` | MongoDB connection. Required in production; empty falls back to a JSON file with a warning. |
 | `SMTP_SERVICE` | Provider shortcut (`gmail`, `outlook`, …). Use instead of `SMTP_HOST`. |
 | `SMTP_HOST/PORT/USER/PASS` | Explicit SMTP server. If all are empty, the Ethereal capture inbox is used. |
+| `SMTP_TLS_MODE` | `starttls` for port 587 or `ssl` for port 465. |
+| `SMTP_FAMILY` | `0` (default), `4`, or `6`; set `4` on Render only when the DNS/network diagnostics support it. |
+| `SMTP_CONNECTION_TIMEOUT/GREETING_TIMEOUT/SOCKET_TIMEOUT` | Explicit SMTP timeouts in milliseconds (defaults: 15000/15000/30000). |
 | `MAIL_FROM` | Envelope "From". Most providers require it to match `SMTP_USER`. |
 | `MAIL_TRANSPORT` | Set to `console` to log submissions and send nothing. |
 
