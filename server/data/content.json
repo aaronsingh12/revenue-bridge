@@ -210,7 +210,7 @@
   ],
   "contact": {
     "_comment_email": "DEMO ADDRESS — shown publicly on the Contact page and in the footer. Change it here (and the mirror in client/src/lib/fallbackContent.json) plus CONTACT_EMAIL in server/.env before launch.",
-    "email": "jasmine@revenuebridge.co.in",
+    "email": "jasmine@revenuebridge.co.in, harneet.singh@revenuebridge.co.in",
     "location": "New Delhi, India — working across time zones"
   }
 }

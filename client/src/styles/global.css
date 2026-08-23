@@ -1302,6 +1302,10 @@ select {
   opacity: 1;
   transition: color 0.3s, border-color 0.3s, transform 0.35s var(--ease);
 }
+.contact-mail a {
+  display: block;
+  color: inherit;
+}
 .footer-col .contact-mail {
   margin-top: 0;
 }

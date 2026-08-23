@@ -210,7 +210,7 @@
   ],
   "contact": {
     "_comment_email": "DEMO ADDRESS — offline mirror of server/data/content.json, used when the API is unreachable. Keep both in sync; delivery itself is controlled by CONTACT_EMAIL in server/.env.",
-    "email": "jasmine@revenuebridge.co.in",
+    "email": "jasmine@revenuebridge.co.in, harneet.singh@revenuebridge.co.in",
     "location": "New Delhi, India — working across time zones"
   }
 }

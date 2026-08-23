@@ -43,9 +43,16 @@ export default function Footer() {
             the real address at launch — and set CONTACT_EMAIL in server/.env,
             which is what actually decides where form submissions are delivered.
           */}
-          <a className="contact-mail" href={`mailto:${contact.email}`}>
-            {contact.email}
-          </a>
+          <div className="contact-mail">
+            {contact.email.split(',').map((address) => {
+              const trimmedAddress = address.trim()
+              return (
+                <a key={trimmedAddress} href={`mailto:${trimmedAddress}`}>
+                  {trimmedAddress}
+                </a>
+              )
+            })}
+          </div>
           <p className="footer-brandline" style={{ marginTop: '0.9rem' }}>
             Every form on this site lands with a real person. No autoresponders pretending to be humans.
           </p>

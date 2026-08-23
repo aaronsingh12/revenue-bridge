@@ -41,9 +41,16 @@ export default function Contact() {
               Where form submissions are DELIVERED is a separate setting:
               CONTACT_EMAIL in server/.env. Change both before launch.
             */}
-            <a className="contact-mail" href={`mailto:${contact.email}`}>
-              {contact.email}
-            </a>
+            <div className="contact-mail">
+              {contact.email.split(',').map((address) => {
+                const trimmedAddress = address.trim()
+                return (
+                  <a key={trimmedAddress} href={`mailto:${trimmedAddress}`}>
+                    {trimmedAddress}
+                  </a>
+                )
+              })}
+            </div>
 
             <p style={{ color: 'var(--muted-on-paper)', maxWidth: '40ch', marginTop: '0.8rem' }}>
               Every message below is stored, routed to the team inbox, and answered by a person — not a sequence.

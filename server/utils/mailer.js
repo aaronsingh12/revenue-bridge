@@ -15,7 +15,7 @@ export async function sendLeadNotification(lead) {
     return { ok: false, mode: 'unconfigured' }
   }
 
-  console.log(`[mail] Email delivery is handled client-side via EmailJS. To: ${to} | Subject: ${subject}`)
+  console.log(`[mail] Email delivery is handled client-side via EmailJS. To: ${to.split(',').join(', ')} | Subject: ${subject}`)
   return { ok: true, mode, previewUrl: null }
 }
 

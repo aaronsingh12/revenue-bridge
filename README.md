@@ -24,15 +24,15 @@ and email is delivered to a throwaway capture inbox whose preview link is printe
 Change it, restart the server, done — the address is never hardcoded anywhere in the source.
 
 ```
-CONTACT_EMAIL=jasmine@revenuebridge.co.in  # ← demo. Replace at launch.
+CONTACT_EMAIL=jasmine@revenuebridge.co.in,harneet.singh@revenuebridge.co.in  # demo. Replace at launch.
 ```
 
 Two things are deliberately separate:
 
 | What | Set in | Currently |
 | --- | --- | --- |
-| Where submissions are **delivered** | `CONTACT_EMAIL` in `server/.env` | the demo address |
-| The address **displayed** on the site (Contact page + footer) | `contact.email` in `server/data/content.json`, mirrored in `client/src/lib/fallbackContent.json` | the demo address |
+| Where submissions are **delivered** | `CONTACT_EMAIL` in `server/.env` | the two demo addresses |
+| The addresses **displayed** on the site (Contact page + footer) | `contact.email` in `server/data/content.json`, mirrored in `client/src/lib/fallbackContent.json` | the two demo addresses |
 
 ### Checking it right now (no credentials needed)
 
